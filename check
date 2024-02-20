@@ -10,6 +10,16 @@ check() {
     cat $SERVICE_CONFIG
   fi
 
+  # issue: nfs module is not loaded on the Docker host's kernel (try: modprobe nfs)
+  # reference: 
+  #   - https://github.com/ehough/docker-nfs-server/issues/1#issuecomment-385061971
+  sudo lsmod | grep nfs >> /dev/null
+  if [ "$?" != "0" ]; then
+    log::info "[$(timestamp)] loading kernel modules: nfs + nfsd ..."
+    sudo modprobe nfs
+    sudo modprobe nfsd
+  fi
+
   service::config_set SERVICE_NFS_PORT text "Port" 2049
 
   service::config_set SERVICE_NFS_DATA_DIR text "Data Dir" "$SERVICE_DATA"
