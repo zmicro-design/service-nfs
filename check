@@ -1,0 +1,19 @@
+#!/bin/bash
+
+service::config_set() {
+  config::check_or_set $1 $2 $SERVICE_CONFIG "${@:3}"
+}
+
+check() {
+  if [ "$DEBUG" = "true" ]; then
+    log::info "[DEBUG][service]: $SERVICE_CONFIG"
+    cat $SERVICE_CONFIG
+  fi
+
+  service::config_set SERVICE_NFS_PORT text "Port" 2049
+
+  service::config_set SERVICE_NFS_DATA_DIR text "Data Dir" "$SERVICE_DATA"
+  # service::config_set SERVICE_NFS_CONFIGS_DIR text "Configs Dir" "$SERVICE_CONFIGS"
+}
+
+check $@
